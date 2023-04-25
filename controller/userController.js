@@ -9,7 +9,7 @@ import crypto from "crypto";
 
 export const register = catchAsyncError(async (req, res, next) => {
   const { name, email, password } = req.body;
-  // const file = req.file;
+  const file = req.file;
 
   if (!name || !email || !password)
     return next(new ErrorHandler("Please insert all the fields", 404));
@@ -18,16 +18,16 @@ export const register = catchAsyncError(async (req, res, next) => {
   if (user) {
     return next(new ErrorHandler("User already Exits !", 409));
   }
-  //const fileUri = getDataUri(file); //convert file format to data url format
-  //const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
+  const fileUri = getDataUri(file); //convert file format to data url format
+  const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
   user = await User.create({
     name,
     email,
     password,
     avatar: {
-      public_id: "mycloud.public_id",
-      url: "mycloud.secure_url",
+      public_id: mycloud.public_id,
+      url: mycloud.url,
     },
   });
   sendToken(res, user, "Registerd Successfully !", 201);
@@ -212,8 +212,7 @@ export const deleteUser = catchAsyncError(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) next(new ErrorHandler("User not Found !", 404));
 
-  // await cloudinary.v2.uploader.destroy(user.avatar.public_id);
-  //cancel subscription
+  await cloudinary.v2.uploader.destroy(user.avatar.public_id);
 
   await user.remove();
   res.status(200).json({
@@ -224,7 +223,7 @@ export const deleteUser = catchAsyncError(async (req, res, next) => {
 
 export const deleteMyProfile = catchAsyncError(async (req, res, next) => {
   const user = await User.findById(req.user._id);
-  // await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+  await cloudinary.v2.uploader.destroy(user.avatar.public_id);
 
   await user.remove();
   res

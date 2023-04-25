@@ -30,10 +30,10 @@ export const createGame = catchAsyncError(async (req, res, next) => {
   if (!title || !description || !category || !createdBy)
     return next(new ErrorHandler("please add all fields ", 400));
 
-  // const file = req.file;
-  // const fileUri = getDataUri(file);
+  const file = req.file;
+  const fileUri = getDataUri(file);
 
-  // const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
+  const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
   await Game.create({
     title,
@@ -41,8 +41,8 @@ export const createGame = catchAsyncError(async (req, res, next) => {
     category,
     createdBy,
     poster: {
-      public_id: "mycloud.public_id",
-      url: "mycloud.url,",
+      public_id: mycloud.public_id,
+      url: mycloud.url,
     },
   });
 

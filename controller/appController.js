@@ -11,21 +11,21 @@ export const createApp = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Please add all fields ", 400));
   }
 
-  //   const file = req.file;
-  //   const fileUri = getDataUri(file);
+    const file = req.file;
+    const fileUri = getDataUri(file);
 
-  //   const mycloud = cloudinary.v2.uploader.upload(fileUri.content);
+    const mycloud = cloudinary.v2.uploader.upload(fileUri.content);
 
-  await Apps.create({
-    title,
-    description,
-    category,
-    createdBy,
-    poster: {
-      public_id: "mycloud.public_id",
-      url: "mycloud.url,",
-    },
-  });
+    await Apps.create({
+      title,
+      description,
+      category,
+      createdBy,
+      poster: {
+        public_id: mycloud.public_id,
+        url: mycloud.url,
+      },
+    });
   res.status(200).json({
     success: true,
     message: "App created successfully. ",
