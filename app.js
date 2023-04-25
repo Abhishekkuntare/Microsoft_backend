@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import ErrorMiddleware from "./middleware/Error.js";
 import express from "express";
+import cors from "cors";
 
 //config
 import { config } from "dotenv";
@@ -15,6 +16,13 @@ app.use(
 );
 
 app.use(cookieParser());
+const corsOrigin = {
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOrigin));
 
 //routes
 import user from "./routes/userRoutes.js";
